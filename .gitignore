@@ -13,3 +13,8 @@ frontend/.nuxt
 /frontend/.env
 /frontend/.env.*
 /frontend/!.env.example
+
+/backend/.venv
+/backend/.idea
+/backend/generated
+.DS_Store
