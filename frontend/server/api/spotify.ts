@@ -18,30 +18,18 @@ export default defineEventHandler(async event => {
     },
     body: 'grant_type=client_credentials',
   })
-
   const tokenData = await tokenRes.json()
   const accessToken = tokenData.access_token
 
   const searchRes = await fetch(
-    `https://api.spotify.com/v1/search?q=${encodeURIComponent(artistName)}&type=artist&limit=1`,
+    `https://api.spotify.com/v1/search?q=${encodeURIComponent(artistName)}&type=artist`,
     {
       headers: {
         Authorization: `Bearer ${accessToken}`,
       },
     }
   )
-
   const searchData = await searchRes.json()
-  const artist = searchData.artists?.items?.[0]
 
-  if (!artist) {
-    throw createError({ statusCode: 404, statusMessage: 'Artist not found' })
-  }
-
-  return {
-    searchData,
-    name: artist.name,
-    genres: artist.genres,
-    image: artist.images?.[0]?.url || null,
-  }
+  return searchData
 })
