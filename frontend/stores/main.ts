@@ -32,10 +32,10 @@ export const useMainStore = defineStore('main', () => {
 
   const setArtistName = (artistInputName: string) => (artistName.value = artistInputName)
 
-  const searchArtist = async (artistInputName: string) => {
+  const searchArtist = async () => {
     const { data } = await useFetch('/api/spotify', {
       method: 'POST',
-      body: { artist: artistInputName },
+      body: { artist: artistName },
     })
     result.value = data.value
     artistData.value = result.value?.artists?.items[0]
