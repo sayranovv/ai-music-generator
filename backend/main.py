@@ -13,10 +13,6 @@ app = FastAPI()
 def read_root():
     return {"Hello": "World"}
 
-@app.get("/items/{item_id}")
-def read_item(item_id: int, q: Union[str, None] = None):
-    return {"item_id": item_id, "q": q}
-
 model = MusicGen.get_pretrained('facebook/musicgen-small')
 model.set_generation_params(duration=5)
 
