@@ -1,13 +1,18 @@
 <script setup lang="ts">
 import { useMainStore } from '~/stores/main'
+import { useDebounce } from '@vueuse/core'
 
 const store = useMainStore()
 
 const artist = ref('')
 
-const onClick = () => {
-  store.setArtistName(artist.value)
-  store.searchArtist()
+const debouncedArtist = useDebounce(artist, 300)
+
+watch(debouncedArtist, (val) => store.setArtistName(val))
+
+const onClick = async () => {
+  await store.searchArtist()
+  await store.generateMusic()
 }
 </script>
 
@@ -22,6 +27,10 @@ const onClick = () => {
         >Generate music</UButton
       >
     </div>
+    <audio v-if="store.audioUrl" controls class="mt-6 w-full">
+      <source :src="store.audioUrl" type="audio/wav" />
+      Your browser does not support the audio element.
+    </audio>
     <div class="mt-4">
       <pre class="text-blue-500">{{ store.artistData }}</pre>
     </div>

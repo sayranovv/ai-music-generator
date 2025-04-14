@@ -26,9 +26,10 @@ interface Artist {
 
 export const useMainStore = defineStore('main', () => {
   const isLoading = ref(false)
-  const artistName = ref<string | null>(null)
-  const artistData = ref<string>()
+  const artistName = ref<string | null>()
+  const artistData = ref<Artist | null>()
   const result = ref<string>()
+  const audioUrl = ref<string | null>(null)
 
   const setArtistName = (artistInputName: string) => (artistName.value = artistInputName)
 
@@ -42,11 +43,37 @@ export const useMainStore = defineStore('main', () => {
     console.log(artistData.value?.genres)
   }
 
+  const generateMusic = async () => {
+    if (!artistData.value?.genres.length) return
+
+    const prompt = artistData.value.genres.join(', ')
+    const formData = new FormData()
+    formData.append('prompt', prompt)
+
+    console.log('yup')
+
+    const response = await fetch('http://localhost:8000/generate', {
+      method: 'POST',
+      body: formData,
+    })
+
+    if (!response.ok) {
+      console.error('Music generation error')
+      return
+    }
+
+    const blob = await response.blob()
+    audioUrl.value = URL.createObjectURL(blob)
+  }
+
+
   return {
     isLoading,
     artistName,
     artistData,
+    audioUrl,
     setArtistName,
     searchArtist,
+    generateMusic,
   }
 })
