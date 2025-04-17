@@ -27,12 +27,6 @@ const onClick = async () => {
         >Generate music</UButton
       >
     </div>
-    <audio v-if="store.audioUrl" controls class="mt-6 w-full">
-      <source :src="store.audioUrl" type="audio/wav" />
-      Your browser does not support the audio element.
-    </audio>
-    <div class="mt-4">
-      <pre class="text-blue-500">{{ store.artistData }}</pre>
-    </div>
+    <AudioPlayer v-if="store.audioUrl" class="mt-6 w-full" :src="store.audioUrl" />
   </div>
 </template>
