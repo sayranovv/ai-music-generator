@@ -15,6 +15,7 @@ frontend/.nuxt
 /frontend/!.env.example
 
 /backend/.venv
+/backend/venv
 /backend/.idea
 /backend/generated
 .DS_Store
