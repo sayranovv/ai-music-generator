@@ -25,7 +25,8 @@ interface Artist {
 }
 
 export const useMainStore = defineStore('main', () => {
-  const isLoading = ref(false)
+  const isSearchingArtist = ref(false)
+  const isGeneratingMusic = ref(false)
   const artistName = ref<string | null>()
   const artistData = ref<Artist | null>()
   const result = ref<string>()
@@ -34,23 +35,24 @@ export const useMainStore = defineStore('main', () => {
   const setArtistName = (artistInputName: string) => (artistName.value = artistInputName)
 
   const searchArtist = async () => {
+    isSearchingArtist.value = true
     const { data } = await useFetch('/api/spotify', {
       method: 'POST',
       body: { artist: artistName },
     })
     result.value = data.value
     artistData.value = result.value?.artists?.items[0]
-    console.log(artistData.value?.genres)
+    isSearchingArtist.value = false
   }
 
   const generateMusic = async () => {
     if (!artistData.value?.genres.length) return
 
+    isGeneratingMusic.value = true
+
     const prompt = artistData.value.genres.join(', ')
     const formData = new FormData()
     formData.append('prompt', prompt)
-
-    console.log('yup')
 
     const response = await fetch('http://localhost:8000/generate', {
       method: 'POST',
@@ -64,11 +66,14 @@ export const useMainStore = defineStore('main', () => {
 
     const blob = await response.blob()
     audioUrl.value = URL.createObjectURL(blob)
+
+    isGeneratingMusic.value = false
   }
 
 
   return {
-    isLoading,
+    isSearchingArtist,
+    isGeneratingMusic,
     artistName,
     artistData,
     audioUrl,
