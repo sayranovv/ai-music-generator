@@ -27,6 +27,8 @@ const onClick = async () => {
         >Generate music</UButton
       >
     </div>
+    <Loader v-if="store.isGeneratingMusic" class="my-5" :type="'generation'" />
+    <Loader v-if="store.isSearchingArtist" class="my-5" :type="'api-fetch'" />
     <AudioPlayer v-if="store.audioUrl" class="mt-6 w-full" :src="store.audioUrl" />
   </div>
 </template>
