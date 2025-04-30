@@ -24,12 +24,28 @@ interface Artist {
   uri: string
 }
 
+interface Artists {
+  href: string
+  items: Artist[]
+  limit: number
+  next: string
+  offset: number
+  previous: string
+  total: number
+}
+
+
+
+interface Result {
+  artists: Artists
+}
+
 export const useMainStore = defineStore('main', () => {
   const isSearchingArtist = ref(false)
   const isGeneratingMusic = ref(false)
   const artistName = ref<string | null>()
   const artistData = ref<Artist | null>()
-  const result = ref<string>()
+  const result = ref<Result | null>(null)
   const audioUrl = ref<string | null>(null)
 
   const setArtistName = (artistInputName: string) => (artistName.value = artistInputName)
@@ -41,7 +57,9 @@ export const useMainStore = defineStore('main', () => {
       body: { artist: artistName },
     })
     result.value = data.value
+    console.log(result.value)
     artistData.value = result.value?.artists?.items[0]
+    console.log(artistData.value)
     isSearchingArtist.value = false
   }
 
