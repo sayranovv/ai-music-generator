@@ -17,6 +17,12 @@ watch(debouncedArtist, val => store.setArtistName(val))
 
 const onClick = async () => {
   await store.searchArtist()
+  store.setExtraParams({
+    duration: duration.value,
+    bpm: bpm.value,
+    mood: mood.value,
+    instruments: instruments.value,
+  })
   await store.generateMusic()
 }
 </script>
