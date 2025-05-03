@@ -34,8 +34,6 @@ interface Artists {
   total: number
 }
 
-
-
 interface Result {
   artists: Artists
 }
@@ -56,10 +54,20 @@ export const useMainStore = defineStore('main', () => {
       method: 'POST',
       body: { artist: artistName },
     })
+
     result.value = data.value
-    console.log(result.value)
-    artistData.value = result.value?.artists?.items[0]
-    console.log(artistData.value)
+    const artist = result.value?.artists?.items[0]
+    artistData.value = artist ?? null
+
+    if (artistData.value && artistData.value.genres.length === 0) {
+      const { data: lastfmData } = await useFetch('/api/lastfm', {
+        method: 'POST',
+        body: { artist: artistData.value.name },
+      })
+
+      artistData.value.genres = lastfmData.value?.genres || []
+    }
+
     isSearchingArtist.value = false
   }
 
@@ -87,7 +95,6 @@ export const useMainStore = defineStore('main', () => {
 
     isGeneratingMusic.value = false
   }
-
 
   return {
     isSearchingArtist,
