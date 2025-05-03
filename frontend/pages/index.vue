@@ -27,8 +27,6 @@ const onClick = async () => {
         >Generate music</UButton
       >
     </div>
-    <Loader v-if="store.isGeneratingMusic" class="my-5" :type="'generation'" />
-    <Loader v-if="store.isSearchingArtist" class="my-5" :type="'api-fetch'" />
     <div v-if="store.artistData" class="flex justify-between gap-5 my-8 items-stretch">
       <img :src="store.artistData?.images[0].url" alt="" class="w-1/3 rounded-md">
       <div class="w-2/3 flex flex-col justify-between items-start">
@@ -39,6 +37,8 @@ const onClick = async () => {
         <UButton :href="store.artistData?.href" class="w-full flex justify-center items-center">Open Spotify</UButton>
       </div>
     </div>
+    <Loader v-if="store.isSearchingArtist" class="my-5" :type="'api-fetch'" />
+    <Loader v-if="store.isGeneratingMusic" class="my-5" :type="'generation'" />
     <AudioPlayer v-if="store.audioUrl" class="mt-6 w-full" :src="store.audioUrl" />
   </div>
 </template>
