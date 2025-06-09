@@ -14,7 +14,7 @@ onMounted(() => {
 
 <template>
   <div class="flex justify-center">
-    <div v-if="type === 'generation'" class="flex justify-between items-center gap-5 max-w-44">
+    <div v-if="type === 'generation'" class="flex justify-between items-center gap-5 max-w-44 h-8">
       <div class="w-20">
         <Transition name="fade">
           <p v-show="show" class="text-rose-400">Generating...</p>
@@ -77,7 +77,7 @@ onMounted(() => {
       </Transition>
 
     </div>
-    <div v-if="type === 'api-fetch'" class="flex justify-between items-center gap-1 max-w-44">
+    <div v-if="type === 'api-fetch'" class="flex justify-between items-center gap-1 max-w-44 h-8">
       <div class="w-24">
         <Transition name="fade">
           <p v-show="show" class="text-rose-400 leading-4.5">Searching artist...</p>

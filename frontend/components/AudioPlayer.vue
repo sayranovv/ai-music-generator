@@ -1,6 +1,6 @@
 <script setup lang="ts">
 defineProps<{
-  src: string | null
+  src: string
 }>()
 
 const audioRef = ref<HTMLAudioElement | null>(null)
