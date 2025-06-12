@@ -1,3 +1,14 @@
+<script setup lang="ts">
+import { useAuth } from '~/composables/useAuth'
+
+const { getCurrentUser } = useAuth()
+
+onMounted(async () => {
+  const promise = await getCurrentUser()
+  console.log(promise)
+})
+</script>
+
 <template>
   <UApp>
     <div
