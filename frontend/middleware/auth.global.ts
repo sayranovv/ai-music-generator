@@ -1,22 +1,11 @@
-export default defineNuxtRouteMiddleware(async to => {
+import { useAuthStore } from '~/stores/auth'
+import { process } from 'std-env'
+
+export default defineNuxtRouteMiddleware(async (to, from) => {
   const authStore = useAuthStore()
-  const publicRoutes = ['/login', '/register', '/password-reset']
-
-  await new Promise(resolve => {
-    const unwatch = authStore.$subscribe(() => {
-      if (!authStore.isLoading) {
-        unwatch()
-        resolve(null)
-      }
-    })
-    if (!authStore.isLoading) resolve(null)
-  })
-
-  if (!authStore.user && !publicRoutes.includes(to.path)) {
+  await authStore.checkSession()
+  if (!authStore.user && process.client && to.path !== '/login') {
+    console.log('auth middleware:', authStore.user)
     return navigateTo('/login')
-  }
-
-  if (authStore.user && publicRoutes.includes(to.path)) {
-    return navigateTo('/')
   }
 })
