@@ -18,7 +18,11 @@ onMounted(async () => {
         <h1
           class="text-primary-500 dark:text-primary-950 sm:text-4xl lg:text-6xl sm:mb-32 2xl:pl-20"
         >
-          <span class="font-bold">AI music generator</span> <br />
+          <span class="font-bold"
+            >NeuroBeats — <br />
+            AI music generator</span
+          >
+          <br />
         </h1>
       </div>
       <div class="sm:w-1/2 sm:pr-10">
