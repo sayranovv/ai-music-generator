@@ -4,7 +4,7 @@ import { useAuth } from '~/composables/useAuth'
 import type { Models } from 'appwrite'
 
 export const useAuthStore = defineStore('authStore', () => {
-  const { getCurrentUser, login, logout } = useAuth()
+  const { getCurrentUser, login, register, logout } = useAuth()
 
   const user = ref<Models.User<Models.Preferences> | null>(null)
   const isLoading = ref(false)
@@ -22,7 +22,7 @@ export const useAuthStore = defineStore('authStore', () => {
     }
   }
 
-  async function loginUser(email: string, password: string) {
+  const loginUser = async (email: string, password: string) => {
     isLoading.value = true
     error.value = null
     try {
@@ -36,11 +36,25 @@ export const useAuthStore = defineStore('authStore', () => {
     }
   }
 
-  async function logoutUser() {
+  const registerUser = async (email: string, password: string) => {
+    isLoading.value = true
+    error.value = null
+    try {
+      await register(email, password)
+      user.value = await getCurrentUser()
+      navigateTo('/')
+    } catch (e) {
+      error.value = (e as Error).message
+    } finally {
+      isLoading.value = false
+    }
+  }
+
+  const logoutUser = async () => {
     await logout()
     user.value = null
     navigateTo('/login')
   }
 
-  return { user, isLoading, error, checkSession, loginUser, logoutUser }
+  return { user, isLoading, error, checkSession, loginUser, registerUser, logoutUser }
 })
