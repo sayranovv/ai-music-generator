@@ -1,4 +1,4 @@
-import { Client, Account, Databases } from 'appwrite'
+import { Client, Account, Databases, ID } from 'appwrite'
 import type { Models } from 'appwrite'
 
 export function useAuth() {
@@ -19,6 +19,11 @@ export function useAuth() {
     return account.createEmailPasswordSession(email, password)
   }
 
+  const register = async (email: string, password: string): Promise<Models.Session> => {
+    await account.create(ID.unique(), email, password)
+    return await account.createEmailPasswordSession(email, password)
+  }
+
   const logout = (): Promise<{}> => {
     return account.deleteSession('current')
   }
@@ -29,6 +34,7 @@ export function useAuth() {
     databases,
     getCurrentUser,
     login,
+    register,
     logout,
   }
 }

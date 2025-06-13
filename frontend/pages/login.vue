@@ -1,9 +1,25 @@
 <script setup lang="ts">
 import { useAuthStore } from '@/stores/auth'
 import * as z from 'zod'
-import type { FormSubmitEvent } from '@nuxt/ui'
+import { definePageMeta } from '#imports'
+import type { TabsItem } from '@nuxt/ui'
+
+definePageMeta({
+  layout: 'empty',
+})
 
 const authStore = useAuthStore()
+
+const tabsItems: TabsItem[] = [
+  {
+    label: 'Login',
+    slot: 'login' as const,
+  },
+  {
+    label: 'Register',
+    slot: 'register' as const,
+  },
+]
 
 const schema = z.object({
   email: z.string().email('Invalid email'),
@@ -17,20 +33,19 @@ const state = reactive<Partial<Schema>>({
   password: undefined,
 })
 
-const onSubmit = async (event: FormSubmitEvent<Schema>) => {
-  if (state.email && state.password) {
-    authStore.loginUser(state.email, state.password)
+async function handleLogin() {
+  try {
+    await authStore.loginUser(state.email, state.password)
+  } catch (err) {
+    console.error(err)
   }
 }
 
-async function handleLogin() {
+const handleRegister = async () => {
   try {
-    const success = await authStore.loginUser(state.email, state.password)
-    if (success) {
-      navigateTo('/')
-    }
+    await authStore.registerUser(state.email, state.password)
   } catch (err) {
-    error.value = err.message
+    console.error(err)
   }
 }
 
@@ -40,49 +55,88 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="h-full pb-24 w-11/12 mx-auto flex flex-col justify-center">
-    <header class="h-1/3 flex items-center justify-center">
-      <h1 class="text-center text-3xl font-bold text-primary-500">Login</h1>
+  <div class="h-full px-4 pb-4 flex flex-col">
+    <header class="pt-7 pb-5">
+      <h1 class="text-center text-lg font-bold">Welcome</h1>
     </header>
-    <div class="h-2/3 flex flex-col justify-between pb-3">
-      <main>
-        <UForm
-          @submit="handleLogin"
-          :schema="schema"
-          :state="state"
-          v-slot="{ errors }"
-          class="space-y-2"
-        >
-          <UFormField label="Email" name="email">
-            <UInput
-              class="w-full"
-              placeholder="Email"
-              type="email"
-              v-model="state.email"
+    <main>
+      <UTabs :items="tabsItems" class="mt-3 w-full">
+        <template #login="{ item }">
+          <UForm
+            @submit="handleLogin"
+            :schema="schema"
+            :state="state"
+            v-slot="{ errors }"
+            class="pt-2 space-y-4"
+          >
+            <UFormField name="email">
+              <UInput
+                class="w-full"
+                placeholder="Email"
+                type="email"
+                v-model="state.email"
+                size="xl"
+              />
+            </UFormField>
+            <UFormField name="password">
+              <UInput
+                class="w-full"
+                placeholder="Password"
+                type="password"
+                v-model="state.password"
+                size="xl"
+              />
+            </UFormField>
+            <UButton
+              class="mt-3 w-full flex justify-center items-center cursor-pointer"
+              label="Login"
+              type="submit"
               size="xl"
+              :disabled="Object.keys(errors).length > 0 || !state.email || !state.password"
             />
-          </UFormField>
-          <UFormField label="Password" name="password">
-            <UInput
-              class="w-full"
-              placeholder="Password"
-              type="password"
-              v-model="state.password"
+          </UForm>
+          <p v-if="authStore.error" class="text-red-500 my-2 leading-4.5">
+            {{ authStore.error }}
+          </p>
+        </template>
+
+        <template #register="{ item }">
+          <UForm
+            @submit="handleRegister"
+            :schema="schema"
+            :state="state"
+            v-slot="{ errors }"
+            class="pt-2 space-y-4"
+          >
+            <UFormField name="email">
+              <UInput
+                class="w-full"
+                placeholder="Email"
+                type="email"
+                v-model="state.email"
+                size="xl"
+              />
+            </UFormField>
+            <UFormField name="password">
+              <UInput
+                class="w-full"
+                placeholder="Password"
+                type="password"
+                v-model="state.password"
+                size="xl"
+              />
+            </UFormField>
+            <UButton
+              class="mt-3 w-full flex justify-center items-center cursor-pointer"
+              label="Login"
+              type="submit"
               size="xl"
+              :disabled="Object.keys(errors).length > 0 || !state.email || !state.password"
             />
-          </UFormField>
-          <UButton
-            class="mt-3 w-full flex justify-center items-center cursor-pointer"
-            label="Login"
-            type="submit"
-            size="xl"
-            :disabled="Object.keys(errors).length > 0 || !state.email || !state.password"
-          />
-        </UForm>
-        <UButton label="Logout" @click="authStore.logoutUser()" class="mt-2" />
-        <p v-if="authStore.error" class="text-red-500 my-2 leading-4.5">{{ authStore.error }}</p>
-      </main>
-      <footer class="mx-auto">Lorem ipsum dolor sit amet</footer>
-    </div>
+          </UForm>
+        </template>
+      </UTabs>
+    </main>
+    <footer class="mx-auto mt-auto">Lorem ipsum dolor sit amet</footer>
   </div>
 </template>

@@ -32,7 +32,7 @@ watch(duration, () => {
 </script>
 
 <template>
-  <div class="pt-4 px-4 pb-24">
+  <div class="px-4 pb-24">
     <header class="pt-7 pb-5">
       <h1 class="text-center text-lg font-bold">NeuroBeats</h1>
     </header>
