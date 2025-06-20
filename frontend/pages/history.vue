@@ -1,4 +1,12 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import { useTracksStore } from '~/stores/tracks'
+
+const tracksStore = useTracksStore()
+
+onMounted(async () => {
+  await tracksStore.getTracks()
+})
+</script>
 
 <template>
   <div class="px-4 pb-24">
@@ -7,12 +15,13 @@
     </header>
     <main>
       <Card
-        v-for="_ in 3"
-        :genre="'Hip Hop'"
-        :description="'Fun'"
-        :name="'Kendrik Lamar'"
-        :src="'123'"
-        :img="'https://encrypted-tbn2.gstatic.com/images?q=tbn:ANd9GcQv4yQiFcphtUods_zlCDvULeK57_5FJ3vYG7Gx3xsZgpWeUb_5dgri-unmxPVTekoVrWeyxG0g9CpK7GbZ4bVhlQ'"
+        v-if="tracksStore.tracks"
+        v-for="track in tracksStore.tracks"
+        :genre="track.genres"
+        :description="track.description"
+        :name="track.name"
+        :src="track.audioUrl"
+        :img="track.imageUrl"
       />
     </main>
   </div>
