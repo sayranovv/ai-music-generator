@@ -29,6 +29,12 @@ const onClick = async () => {
 watch(duration, () => {
   console.log(duration.value)
 })
+
+watch(bpm, () => {
+  if (bpm.value) {
+    store.setBpm(bpm.value)
+  }
+})
 </script>
 
 <template>
@@ -45,7 +51,14 @@ watch(duration, () => {
             <p class="font-medium">BPM</p>
             <p>{{ bpm || 120 }}</p>
           </div>
-          <USlider v-model="bpm" :default-value="120" :min="60" :max="180" class="cursor-pointer" />
+          <USlider
+            v-model="bpm"
+            :default-value="120"
+            :min="60"
+            :max="180"
+            :step="5"
+            class="cursor-pointer"
+          />
         </section>
 
         <section class="w-full space-y-2.5">
@@ -62,26 +75,26 @@ watch(duration, () => {
           />
         </section>
 
-        <section class="w-full flex items-center justify-between gap-3">
-          <label class="font-medium text-zinc-600 dark:text-zinc-300">Mood</label>
-          <USelect
-            v-model="mood"
-            :items="['меланхолично', 'весело', 'агрессивно', 'романтично']"
-            class="w-1/2 cursor-pointer"
-            placeholder="Выбери"
-          />
-        </section>
+        <!--        <section class="w-full flex items-center justify-between gap-3">-->
+        <!--          <label class="font-medium text-zinc-600 dark:text-zinc-300">Mood</label>-->
+        <!--          <USelect-->
+        <!--            v-model="mood"-->
+        <!--            :items="['меланхолично', 'весело', 'агрессивно', 'романтично']"-->
+        <!--            class="w-1/2 cursor-pointer"-->
+        <!--            placeholder="Выбери"-->
+        <!--          />-->
+        <!--        </section>-->
 
-        <section class="w-full flex items-start justify-between gap-3">
-          <label class="font-medium text-zinc-600 dark:text-zinc-300 pt-1">Instruments</label>
-          <USelectMenu
-            v-model="instruments"
-            :items="['гитара', 'пианино', 'ударные', 'синтезатор']"
-            multiple
-            class="w-1/2 cursor-pointer"
-            placeholder="Выбери инструменты"
-          />
-        </section>
+        <!--        <section class="w-full flex items-start justify-between gap-3">-->
+        <!--          <label class="font-medium text-zinc-600 dark:text-zinc-300 pt-1">Instruments</label>-->
+        <!--          <USelectMenu-->
+        <!--            v-model="instruments"-->
+        <!--            :items="['гитара', 'пианино', 'ударные', 'синтезатор']"-->
+        <!--            multiple-->
+        <!--            class="w-1/2 cursor-pointer"-->
+        <!--            placeholder="Выбери инструменты"-->
+        <!--          />-->
+        <!--        </section>-->
       </div>
 
       <UButton
