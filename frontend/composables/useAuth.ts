@@ -11,22 +11,17 @@ export function useAuth() {
   const account = new Account(client)
   const databases = new Databases(client)
 
-  const getCurrentUser = (): Promise<Models.User<Models.Preferences>> => {
-    return account.get()
-  }
+  const getCurrentUser = (): Promise<Models.User<Models.Preferences>> => account.get()
 
-  const login = (email: string, password: string): Promise<Models.Session> => {
-    return account.createEmailPasswordSession(email, password)
-  }
+  const login = (email: string, password: string): Promise<Models.Session> =>
+    account.createEmailPasswordSession(email, password)
 
   const register = async (email: string, password: string): Promise<Models.Session> => {
     await account.create(ID.unique(), email, password)
     return await account.createEmailPasswordSession(email, password)
   }
 
-  const logout = (): Promise<{}> => {
-    return account.deleteSession('current')
-  }
+  const logout = (): Promise<{}> => account.deleteSession('current')
 
   return {
     client,

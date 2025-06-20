@@ -58,6 +58,8 @@ export const useMainStore = defineStore('main', () => {
   const artistData = ref<Artist | null>()
   const result = ref<Result | null>(null)
   const audioUrl = ref<string | null>(null)
+  const bpm = ref<number | null>(null)
+  const duration = ref<number>(20)
 
   const setArtistName = (artistInputName: string) => (artistName.value = artistInputName)
 
@@ -68,6 +70,10 @@ export const useMainStore = defineStore('main', () => {
     extraParams.value.instruments = params.instruments
     console.log(extraParams)
   }
+
+  const setBpm = (newBpm: number) => (bpm.value = newBpm)
+
+  const setDuration = (newDuration: number) => (duration.value = newDuration)
 
   const searchArtist = async () => {
     if (artistName.value) {
@@ -99,9 +105,14 @@ export const useMainStore = defineStore('main', () => {
 
     isGeneratingMusic.value = true
 
-    const prompt = artistData.value.genres.join(', ')
+    const prompt = ref(artistData.value.genres.join(', ') + ' track')
+    if (bpm.value) prompt.value += ` ${bpm.value} BPM`
+    if (artistName.value) prompt.value += ` in the style of ${artistName.value}`
+    console.log(prompt.value)
+
     const formData = new FormData()
-    formData.append('prompt', prompt)
+    formData.append('prompt', prompt.value)
+    formData.append('duration', duration.value.toString())
 
     const response = await fetch('http://localhost:8000/generate', {
       method: 'POST',
@@ -116,6 +127,30 @@ export const useMainStore = defineStore('main', () => {
     const blob = await response.blob()
     audioUrl.value = URL.createObjectURL(blob)
 
+    const { storage, databases, ID, account } = useAppwrite()
+    const currentUser = await account.get()
+    const file = new File([blob], `track-${Date.now()}.wav`, { type: 'audio/wav' })
+    const uploaded = await storage.createFile('tracks', ID.unique(), file, [
+      `read("user:${currentUser.$id}")`,
+      `write("user:${currentUser.$id}")`,
+    ])
+    const fileId = uploaded.$id
+    await databases.createDocument(
+      'genMusic',
+      'tracks',
+      ID.unique(),
+      {
+        userId: currentUser.$id,
+        name: artistName.value,
+        fileId,
+        imageUrl: artistData.value.images[0].url,
+        createdAt: new Date().toISOString(),
+        description: '' + artistName.value + '' + bpm.value,
+        genres: artistData.value.genres.join(', '),
+      },
+      [`read("user:${currentUser.$id}")`, `write("user:${currentUser.$id}")`]
+    )
+
     isGeneratingMusic.value = false
   }
 
@@ -126,9 +161,13 @@ export const useMainStore = defineStore('main', () => {
     extraParams,
     artistData,
     audioUrl,
+    bpm,
+    duration,
     setArtistName,
     searchArtist,
     generateMusic,
     setExtraParams,
+    setBpm,
+    setDuration,
   }
 })
