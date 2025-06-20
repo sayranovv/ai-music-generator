@@ -31,9 +31,9 @@ const togglePlay = () => {
 
     <div class="flex items-center justify-between gap-4">
       <NuxtImg v-if="cover" :src="cover" alt="123" class="w-1/5 rounded-lg" />
-      <div class="w-3/5">
+      <div class="w-3/5 overflow-hidden">
         <p class="font-bold w-full truncate">{{ songName }}</p>
-        <p class="text-sm opacity-40 truncate">{{ genre }}</p>
+        <p class="text-sm opacity-40 w-full text-nowrap truncate">{{ genre }}</p>
       </div>
       <button
         @click.prevent="togglePlay"
