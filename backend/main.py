@@ -23,10 +23,10 @@ def read_root():
     return {"Hello": "World"}
 
 model = MusicGen.get_pretrained('facebook/musicgen-small')
-model.set_generation_params(duration=5)
 
 @app.post("/generate")
-def generate_music(prompt: str = Form(...)):
+def generate_music(prompt: str = Form(...), duration: int = Form(5)):
+    model.set_generation_params(duration=duration)
     wav = model.generate([prompt])
     wav_tensor = wav[0].cpu()
     sample_rate = model.sample_rate
