@@ -137,6 +137,6 @@ onMounted(() => {
         </template>
       </UTabs>
     </main>
-    <footer class="mx-auto mt-auto">Lorem ipsum dolor sit amet</footer>
+    <footer class="mx-auto mt-auto">tg: @sayranovv</footer>
   </div>
 </template>
