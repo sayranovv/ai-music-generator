@@ -32,7 +32,7 @@ const onClick = () => store.logoutUser()
         <h2 class="text-lg font-bold pt-4 pb-2">Settings</h2>
         <div class="flex justify-between py-4">
           <p class="font-medium">Dark Theme</p>
-          <USwitch size="xl" :default-value="true" />
+          <USwitch size="xl" :default-value="true" disabled />
         </div>
       </section>
     </main>

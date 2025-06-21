@@ -48,6 +48,7 @@ interface ExtraParams {
 export const useMainStore = defineStore('main', () => {
   const isSearchingArtist = ref(false)
   const isGeneratingMusic = ref(false)
+  const generationError = ref<string | null>(null)
   const artistName = ref<string | null>()
   const extraParams = ref<ExtraParams>({
     duration: null,
@@ -93,7 +94,7 @@ export const useMainStore = defineStore('main', () => {
           body: { artist: artistData.value.name },
         })
 
-        artistData.value.genres = lastfmData.value?.genres || []
+        artistData.value.genres = [lastfmData.value?.genres[0], lastfmData.value?.genres[1]] || []
       }
     }
 
@@ -103,55 +104,62 @@ export const useMainStore = defineStore('main', () => {
   const generateMusic = async () => {
     if (!artistData.value?.genres.length) return
 
-    isGeneratingMusic.value = true
+    try {
+      isGeneratingMusic.value = true
 
-    const prompt = ref(artistData.value.genres.join(', ') + ' track')
-    if (bpm.value) prompt.value += ` ${bpm.value} BPM`
-    if (artistName.value) prompt.value += ` in the style of ${artistName.value}`
-    console.log(prompt.value)
+      const prompt = ref(artistData.value.genres[0] + ', ' + artistData.value.genres[1] + ' track')
+      if (bpm.value) prompt.value += ` ${bpm.value} BPM`
+      if (artistName.value) prompt.value += ` in the style of ${artistName.value}`
+      prompt.value += '. High-quality production.'
+      console.log(prompt.value)
 
-    const formData = new FormData()
-    formData.append('prompt', prompt.value)
-    formData.append('duration', duration.value.toString())
+      const formData = new FormData()
+      formData.append('prompt', prompt.value)
+      formData.append('duration', duration.value.toString())
 
-    const response = await fetch('http://localhost:8000/generate', {
-      method: 'POST',
-      body: formData,
-    })
+      const response = await fetch('http://localhost:8000/generate', {
+        method: 'POST',
+        body: formData,
+      })
 
-    if (!response.ok) {
-      console.error('Music generation error')
-      return
+      const blob = await response.blob()
+      audioUrl.value = URL.createObjectURL(blob)
+
+      const { storage, databases, ID, account } = useAppwrite()
+      const currentUser = await account.get()
+
+      const file = new File([blob], `track-${Date.now()}.wav`, { type: 'audio/wav' })
+      const uploaded = await storage.createFile('tracks', ID.unique(), file, [
+        `read("user:${currentUser.$id}")`,
+        `write("user:${currentUser.$id}")`,
+      ])
+
+      const fileId = uploaded.$id
+
+      await databases.createDocument(
+        'genMusic',
+        'tracks',
+        ID.unique(),
+        {
+          userId: currentUser.$id,
+          name: artistName.value,
+          fileId,
+          imageUrl: artistData.value.images[0].url,
+          createdAt: new Date().toISOString(),
+          description: bpm.value + ' BPM ' + duration.value + ' s.',
+          genres: artistData.value.genres.join(', '),
+        },
+        [`read("user:${currentUser.$id}")`, `write("user:${currentUser.$id}")`]
+      )
+
+      bpm.value = null
+      duration.value = 20
+    } catch (e) {
+      generationError.value = e
+      console.error(e)
+    } finally {
+      isGeneratingMusic.value = false
     }
-
-    const blob = await response.blob()
-    audioUrl.value = URL.createObjectURL(blob)
-
-    const { storage, databases, ID, account } = useAppwrite()
-    const currentUser = await account.get()
-    const file = new File([blob], `track-${Date.now()}.wav`, { type: 'audio/wav' })
-    const uploaded = await storage.createFile('tracks', ID.unique(), file, [
-      `read("user:${currentUser.$id}")`,
-      `write("user:${currentUser.$id}")`,
-    ])
-    const fileId = uploaded.$id
-    await databases.createDocument(
-      'genMusic',
-      'tracks',
-      ID.unique(),
-      {
-        userId: currentUser.$id,
-        name: artistName.value,
-        fileId,
-        imageUrl: artistData.value.images[0].url,
-        createdAt: new Date().toISOString(),
-        description: '' + artistName.value + '' + bpm.value,
-        genres: artistData.value.genres.join(', '),
-      },
-      [`read("user:${currentUser.$id}")`, `write("user:${currentUser.$id}")`]
-    )
-
-    isGeneratingMusic.value = false
   }
 
   return {
@@ -169,5 +177,6 @@ export const useMainStore = defineStore('main', () => {
     setExtraParams,
     setBpm,
     setDuration,
+    generationError,
   }
 })

@@ -3,6 +3,11 @@ import { useAuth } from '~/composables/useAuth'
 
 const { getCurrentUser } = useAuth()
 
+onBeforeMount(() => {
+  document.documentElement.classList.remove('light')
+  document.documentElement.classList.add('dark')
+})
+
 onMounted(async () => {
   const promise = await getCurrentUser()
   console.log(promise)
