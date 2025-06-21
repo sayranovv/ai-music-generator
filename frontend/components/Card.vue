@@ -25,9 +25,9 @@ const togglePlay = () => {
 <template>
   <div class="flex justify-between items-center py-4">
     <audio ref="audioRef" :src="src" @ended="isPlaying = false" />
-    <div class="h-32 flex flex-col justify-between items-left">
+    <div class="h-32 w-1/2 flex flex-col justify-between items-left">
       <div>
-        <p class="text-sm text-rose-100/60">{{ genre }}</p>
+        <p class="text-sm text-rose-100/60 w-full text-nowrap truncate">{{ genre }}</p>
         <p class="font-bold">{{ name }}</p>
         <p class="text-sm text-rose-100/60">{{ description }}</p>
       </div>
@@ -41,7 +41,9 @@ const togglePlay = () => {
         <UIcon v-else name="material-symbols:pause-outline-rounded" size="20" />
       </UButton>
     </div>
-    <NuxtImg :src="img" class="w-32 h-32 object-cover rounded-xl" />
+    <div class="w-32 h-32">
+      <NuxtImg :src="img" class="w-full h-full object-cover rounded-xl" />
+    </div>
   </div>
 </template>
 
