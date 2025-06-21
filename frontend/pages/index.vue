@@ -43,7 +43,7 @@ watch(bpm, () => {
       <h1 class="text-center text-lg font-bold">NeuroBeats</h1>
     </header>
     <main class="mt-10 space-y-10">
-      <UInput size="xl" highlight class="w-full" placeholder="Enter artist name" v-model="artist" />
+      <UInput class="w-full" size="xl" highlight placeholder="Enter artist name" v-model="artist" />
 
       <div class="space-y-6">
         <section class="w-full space-y-2.5">
@@ -101,11 +101,29 @@ watch(bpm, () => {
         size="xl"
         class="w-full flex items-center justify-center cursor-pointer"
         @click="onClick"
+        :disabled="!artist"
         >Generate</UButton
       >
     </main>
-    <Loader v-if="store.isSearchingArtist" class="my-5" :type="'api-fetch'" />
-    <Loader v-if="store.isGeneratingMusic" class="my-5" :type="'generation'" />
+
+    <Transition name="fade">
+      <Modal v-if="store.isSearchingArtist">
+        <Loader :type="'api-fetch'" />
+      </Modal>
+    </Transition>
+
+    <Transition name="fade">
+      <Modal v-if="store.isGeneratingMusic">
+        <Loader :type="'generation'" />
+      </Modal>
+    </Transition>
+
+    <Transition name="fade">
+      <Modal v-if="store.generationError" @close="store.generationError = null">
+        <p class="text-red-500">{{ store.generationError }}</p>
+      </Modal>
+    </Transition>
+
     <AudioPlayer
       v-if="store.audioUrl && store.artistData"
       class="mt-6 w-full"
@@ -116,3 +134,18 @@ watch(bpm, () => {
     />
   </div>
 </template>
+
+<style scoped>
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.3s ease-in-out;
+}
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+.fade-enter-to,
+.fade-leave-from {
+  opacity: 1;
+}
+</style>
