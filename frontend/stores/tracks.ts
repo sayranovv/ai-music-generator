@@ -39,5 +39,6 @@ export const useTracksStore = defineStore('tracksStore', () => {
   return {
     tracks,
     getTracks,
+    isLoading,
   }
 })
