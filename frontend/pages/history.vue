@@ -12,7 +12,7 @@ onMounted(async () => await tracksStore.getTracks())
       <h1 class="text-center text-lg font-bold">History</h1>
     </header>
     <main>
-      <Transition name="fade" v-if="tracksStore.tracks.length > 0">
+      <Transition name="fade" v-if="tracksStore.tracks">
         <div>
           <Card
             v-if="tracksStore.tracks"
@@ -34,8 +34,8 @@ onMounted(async () => await tracksStore.getTracks())
         v-if="tracksStore.isLoading"
         class="absolute w-full flex"
         :class="{
-          'top-7 right-10 justify-end': tracksStore.tracks.length > 0,
-          'inset-0 justify-center items-center': tracksStore.tracks.length === 0,
+          'top-7 right-10 justify-end': tracksStore.tracks > 0,
+          'inset-0 justify-center items-center': tracksStore.tracks === 0,
         }"
         :type="'default'"
       />
