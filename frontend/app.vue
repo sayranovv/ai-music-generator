@@ -1,17 +1,9 @@
 <script setup lang="ts">
-import { useAuth } from '~/composables/useAuth'
+const authStore = useAuthStore()
 
-const { getCurrentUser } = useAuth()
+onBeforeMount(() => document.documentElement.classList.add('dark'))
 
-onBeforeMount(() => {
-  document.documentElement.classList.remove('light')
-  document.documentElement.classList.add('dark')
-})
-
-onMounted(async () => {
-  const promise = await getCurrentUser()
-  console.log(promise)
-})
+onMounted(async () => await authStore.checkSession())
 </script>
 
 <template>
