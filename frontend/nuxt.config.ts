@@ -12,4 +12,15 @@ export default defineNuxtConfig({
       appwriteProjectName: process.env.NUXT_PUBLIC_APPWRITE_PROJECT_NAME,
     },
   },
+  pinia: {
+    autoImports: ['defineStore', ['defineStore', 'definePiniaStore']],
+  },
+  imports: {
+    presets: [
+      {
+        from: 'pinia-plugin-persistedstate',
+        imports: ['createPersistedState'],
+      },
+    ],
+  },
 })

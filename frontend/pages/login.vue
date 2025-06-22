@@ -48,10 +48,6 @@ const handleRegister = async () => {
     console.error(err)
   }
 }
-
-onMounted(() => {
-  console.log(localStorage.getItem('user'))
-})
 </script>
 
 <template>
