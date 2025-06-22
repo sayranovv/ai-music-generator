@@ -27,7 +27,10 @@ const onClick = async () => {
 }
 
 watch(duration, () => {
-  console.log(duration.value)
+  if (duration.value) {
+    store.setDuration(duration.value)
+    console.log(store.duration)
+  }
 })
 
 watch(bpm, () => {
@@ -64,13 +67,13 @@ watch(bpm, () => {
         <section class="w-full space-y-2.5">
           <div class="flex justify-between items-center">
             <p class="font-medium">Duration (sec)</p>
-            <p>{{ duration || 20 }}</p>
+            <p>{{ duration || 10 }}</p>
           </div>
           <USlider
             v-model="duration"
-            :default-value="20"
-            :min="10"
-            :max="60"
+            :default-value="10"
+            :min="5"
+            :max="30"
             class="cursor-pointer"
           />
         </section>
