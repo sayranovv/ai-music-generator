@@ -23,7 +23,7 @@ const togglePlay = () => {
 </script>
 
 <template>
-  <div class="flex justify-between items-center py-4">
+  <a class="flex justify-between items-center py-4" :href="src" download="">
     <audio ref="audioRef" :src="src" @ended="isPlaying = false" />
     <div class="h-32 w-1/2 flex flex-col justify-between items-left">
       <div>
@@ -44,7 +44,7 @@ const togglePlay = () => {
     <div class="w-32 h-32">
       <NuxtImg :src="img" class="w-full h-full object-cover rounded-xl" />
     </div>
-  </div>
+  </a>
 </template>
 
 <style scoped></style>

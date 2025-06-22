@@ -60,7 +60,7 @@ export const useMainStore = defineStore('main', () => {
   const result = ref<Result | null>(null)
   const audioUrl = ref<string | null>(null)
   const bpm = ref<number | null>(null)
-  const duration = ref<number>(20)
+  const duration = ref<number>(10)
 
   const setArtistName = (artistInputName: string) => (artistName.value = artistInputName)
 
@@ -115,9 +115,12 @@ export const useMainStore = defineStore('main', () => {
 
       const formData = new FormData()
       formData.append('prompt', prompt.value)
-      formData.append('duration', duration.value.toString())
+      formData.append('duration', duration.value)
 
-      const response = await fetch('http://localhost:8000/generate', {
+      const response = await fetch('https://api.sayranov.site/generate', {
+        headers: {
+          'bypass-tunnel-reminder': '1',
+        },
         method: 'POST',
         body: formData,
       })
@@ -146,7 +149,7 @@ export const useMainStore = defineStore('main', () => {
           fileId,
           imageUrl: artistData.value.images[0].url,
           createdAt: new Date().toISOString(),
-          description: bpm.value + ' BPM ' + duration.value + ' s.',
+          description: (bpm.value | 'default') + ' BPM ' + duration.value + 's.',
           genres: artistData.value.genres.join(', '),
         },
         [`read("user:${currentUser.$id}")`, `write("user:${currentUser.$id}")`]
