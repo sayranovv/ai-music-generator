@@ -7,5 +7,5 @@ The bottom line is that the user enters the name of the artist / music group in 
 ## Technology stack
 
 - Frontend: Nuxt, TypeScript, Pinia, TailwindCSS, NuxtUI
-- Backend: Python
+- Backend: Python, AppWrite (authorization + database + storage)
 - APIs: FastApi (python), Spotify API, LastFM API
